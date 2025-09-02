@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notificaciones</title>
+</head>
+<body>
+<h1>Notificaciones en tiempo real</h1>
+<button onclick="enviarMensaje()">Enviar Global</button>
+<ul id="mensajes"></ul>
+
+<script>
+const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+const socket = new WebSocket(protocol + window.location.host + "/apps/proyecto/ws/notificaciones/");
+
+socket.onopen = () => console.log("Conectado ✅");
+socket.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    const ul = document.getElementById("mensajes");
+    const li = document.createElement("li");
+    li.textContent = data.mensaje;
+    ul.appendChild(li);
+};
+socket.onclose = () => console.log("Desconectado ❌");
+
+function enviarMensaje() {
+    fetch("enviar-global/").then(res => res.json()).then(console.log);
+}
+</script>
+</body>
+</html>
